@@ -37,15 +37,18 @@ end
 
 -- make it move during the hour
 function drawHourHandle(hour)
-	local hourHandleLength = radius - 40
-	local hourAngle = -30 * hour + 90
+	local hourHandleLength = radius -40
+	local hourFraction = getCurrentTime().minute / 60
+	local hourAngle = (-30 * (hour+hourFraction) + 90)
 	local hourAngle2 = getPointOnCircle(centerx, centery, hourHandleLength, hourAngle)
 	line(centerx, centery, hourAngle2.x, hourAngle2.y, COLORS.WHITE)
 end
 
 function drawMinuteSecondHandle(time, color)
 	local timeHandleLength = radius - 20
-	local timeAngle = -6 * time + 90
+	local timeFraction = time / 60
+	local timeAngle = (-6 * (time+timeFraction) + 90)
+		print(timeAngle)
 	local timeAngle2 = getPointOnCircle(centerx, centery, timeHandleLength, timeAngle)
 	line(centerx, centery, timeAngle2.x, timeAngle2.y, color)
 end
