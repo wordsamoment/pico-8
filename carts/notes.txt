@@ -1,0 +1,23 @@
+COLORS
+0 BLACK
+1 DARK BLUE
+2 MAGENTA
+3 DARK GREEN
+
+4 BROWN
+5 GREY
+6 LIGHT GREY
+7 WHITE
+
+8 RED
+9 ORANGE
+10 YELLOW
+11 NEON GREEN
+
+12 LIGHT BLUE
+13 LIGHT PURPLE
+14 PINK
+15 SKIN
+----------
+Can type 32 characters in a row.
+Can type 20 or 21 lines before scrolling.

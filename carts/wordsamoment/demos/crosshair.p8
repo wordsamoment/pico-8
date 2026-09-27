@@ -1,0 +1,50 @@
+pico-8 cartridge // http://www.pico-8.com
+version 43
+__lua__
+-- ATTEMPT 01
+-- INIT
+function convertDegreeToTurn(degree)
+	return degree / 360
+end
+
+function drawPointOnCircle(circleOriginX, circleOriginY, circleRadius, angle, color)
+	x = circleOriginX + circleRadius * cos(convertDegreeToTurn(angle))
+	y = circleOriginY + circleRadius * sin(convertDegreeToTurn(angle))
+	la = pset(x, y, color)
+end
+
+function _init()
+	centerx, centery = 0, 64
+	radius = 50
+	angle = 0
+	bg_color = 0
+end
+
+function _update()
+	angle += 1
+	-- increments angle continuously
+	centerx = centerx + 2^2 -5
+	centery = centery + 0.3
+	if (centerx >= 127) centerx = 0
+end
+
+function _draw()
+	cls(bg_color)
+	circ(centerx, centery, radius, 7)
+	circ(centerx + 64, centery, radius, 7)
+	drawPointOnCircle(centerx, centery, radius, angle, 8)
+	drawPointOnCircle(centerx, centery, radius, angle + 60, 3)
+	drawPointOnCircle(centerx + 64, centery, radius, angle, 9)
+	drawPointOnCircle(centerx + 64, centery, radius, angle + 60, 14)
+end
+
+--
+------lines
+
+__gfx__
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00700700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00700700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
