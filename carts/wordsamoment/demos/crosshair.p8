@@ -23,9 +23,9 @@ end
 function _update()
 	angle += 1
 	-- increments angle continuously
-	centerx = centerx + 2^2 -5
-	centery = centery + 0.3
-	if (centerx >= 127) centerx = 0
+--	centerx = centerx + 2^2 -5
+--	centery = centery + 0.3
+--	if (centerx >= 127) centerx = 0
 end
 
 function _draw()
