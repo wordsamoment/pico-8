@@ -1,0 +1,77 @@
+The deltatime is the time since your last frame. It is used to keep things constant, even if your framerate isn't.
+
+Maybe you remember some older games. If you play them now, some of them can not handle the possible higher framerates of modern gpus. This causes the game to "run to fast", like you can move faster or something like this.
+
+Using a delta time and multiply your characters velocity with it keeps things constant:
+
+If you have 60 fps (default), your delta time will be 0.016666... so lets say 0.017. This is the result from: 1 / 60 (60 frames in 1 second) So in theory, if you would have a character moving x units every frame, he would do so every 0.017 seconds, when playing with 60 fps...
+
+OR if you have 30 fps your delta time will be 0.0333333... (1/30), meaning your char would move every 0.03 seconds the same x units (so he is moving slower).
+
+If your machine would output 120 frames, _process() gets executed (and so all things in it) twice as often, so your character could move twice as fast, in comparison to 60 frames per second.
+
+But if you multiply your characters velocity with the delta time it keeps the traveled distance in x seconds constant. Lets take the number 15 as example for the players velocity:
+
+15 * (1/60) = 0.25 In this case the player would move 0.25 units per frame.
+
+15 * (1/30) = 0.5 In this case the player would move 0.5 units per frame. BUT keep in mind that the 0.5 only gets executed half as often as the 0.25 (Because 60 and 30 frames (calculations) per second.
+
+Sooo... we could multiply the 0.5 with 0.5 (50% lesy frames), which results in (also) 0.25 units moved per second, but you can imagine this multiplication is represented by your frames (60->30; 50% less), so this is just theory....Meaning now your velocity being multplied with your delta (1/60 or 1/30), your fps do not matter.
+
+So during, lets say 5 seconds, now the player would move the same distance with 60fps, as well as with 30fps.
+
+I hope this is useful for you.
+
+
+
+---
+
+	-- mouse.x = stat(32)
+	-- mouse.y = stat(33)
+	-- centerX = mouse.x
+	-- centerY = mouse.y
+
+
+	---
+
+	
+lynn's house
+Setting timers in simple games (feat. the frame rule)
+
+July 24, 2026
+
+Lately I’ve been reading the disassembled source code to Super Mario Bros., and I learned that, in its code, events are scheduled for the future in much the same way I do it when making a quick game-jam game in Lua, such as o moku e mun.
+
+It’s so simple it’s barely a system! But I like how understandable-yet-flexible it is. I’ll describe it in Lua, for use in a PICO-8 or Picotron game. It’s two lines of code! Read ‘em and weep.
+Timers in PICO-8
+
+First, define a table T. I’d like to add some Lua magic that makes T.foo be 0 if it hasn’t been set yet. This is a bit strange, but in a game jam it saves some precious time bouncing to the top of the file and back to add T.foo=0 and prevent nil errors. Here it is:
+
+local T = setmetatable({}, {__index = function() return 0 end})
+
+Then, in the _update function (once every frame), tick down all the timers:
+
+for k,v in pairs(T) do T[k]=max(0,v-1) end
+
+That’s it! At any time, T.foo is the amount of frames left on the foo timer.
+1. Making stuff happen, for a while
+
+Let’s say you want the player to glow for one second. That’s 60 frames.
+
+You just write T.glow=60 to start the timer, and elsewhere you check T.glow>0 to decide whether to draw a glowy sprite.
+
+To stop the glowing, you write T.glow=0. To extend the glow, you trigger T.glow=60 again. Simple!
+2. Making stuff happen, later
+A frog taking a nap in the left margin. Let's say you want to schedule a *blip!* sound effect, two seconds from now.
+
+You set T.blip=120 to start the timer, and then in your update function you write: if (T.blip==1) sfx(2).
+
+To cancel the timer, just set T.blip=0.
+
+You can also write stuff like if (T.blip%10==1) sfx(2) to blip repeatedly while the timer is running.
+3. Non-global timers
+
+You can also have more than one T. Maybe your Enemy objects each have their own self.T. Just make sure your Enemy:update ticks everything in the table down.
+
+-- CENTERING TEXT
+print("game over", 64 - ((#"game over" * 4) / 2), 64 - 2, COLORS.RED)
