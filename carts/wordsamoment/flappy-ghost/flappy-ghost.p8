@@ -1,9 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
--- SETUP -----------------------
-COLORS = { BLACK = 0, DARKBLUE = 1, MAGENTA = 2, DARKGREEN = 3, BROWN = 4, DARKGREY = 5, GREY = 6, WHITE = 7, RED = 8, ORANGE = 9, YELLOW = 10, NEONGREEN = 11, LIGHTBLUE = 12, LAVENDER = 13, PINK = 14, PEACH = 15 }
-
+-- UTILITIES -----------------------
 PRINT = {}
 function PRINT.inCenter(text, height, color)
 	local glyphsize = 4
@@ -11,14 +9,17 @@ function PRINT.inCenter(text, height, color)
 	-- one letter = 4 px len
 end
 
+-- SETUP -----------------------
+COLORS = { BLACK = 0, DARKBLUE = 1, MAGENTA = 2, DARKGREEN = 3, BROWN = 4, DARKGREY = 5, GREY = 6, WHITE = 7, RED = 8, ORANGE = 9, YELLOW = 10, NEONGREEN = 11, LIGHTBLUE = 12, LAVENDER = 13, PINK = 14, PEACH = 15 }
 -- global delta time
 DELTATIME = nil
 
 TIMER = setmetatable({}, { __index = function() return 0 end })
 -- Clever countdown timer helper - https://lynn.github.io/blog/pico-timers/
 
-ghost = { x = 64, y = 0, size = 8, currentSprite = 0, lastJumpTime = 0, verticalSpeed = 0, jumpSpeed = 40, activeSpriteSheet = 0 }
-WALL = setmetatable({}, {})
+WORLD = { ceiling = 0, floor = 127 }
+GHOST = { x = 64, y = 50, size = 8, currentSprite = 0, lastJumpTime = 0, verticalSpeed = 0, jumpSpeed = 40, activeSpriteSheet = 0 }
+WALL_ABOVE = { x = 100, y = 0, w = 5, h = 40 }
 
 -- FUNCTIONS -----------------------
 ---- CALCULATIONS -----------------------
@@ -33,39 +34,55 @@ function calculateTimers()
 	for name, time in pairs(TIMER) do
 		TIMER[name] = max(0, time - DELTATIME)
 		-- minus DELTATIME let's you write seconds as 1 not as 60
+		-- added "- DELTATIME" compared to lynn's to achieve this.
 	end
 end
 
 ---- GHOST CALCULATIONS -----------------------
 function ghostCalculateBehavior()
-	ghostFalling()
 	ghostJump()
+	ghostFalling()
+	ghostWorldBoundaryCollision()
+	ghostWallCollision()
 end
 
-function ghostFalling()
-	ghost.y = ghost.y - (ghost.verticalSpeed * DELTATIME)
-	ghost.verticalSpeed = ghost.verticalSpeed + (-100 * DELTATIME)
+-- Not needed for x axis in flappy-ghost
+-- function ghostWorldBoundaryCollision(obj, min_x, min_y, max_x, max_y)
+--  obj.x = mid(min_x, obj.x, max_x)
+-- 	obj.y = mid(min_y, obj.y, max_y)
+-- end
 
-	if ghost.y >= 124 then
-		ghost.y = 124
-		ghost.verticalSpeed = 0
+-- https://nerdyteachers.com/PICO-8/Collision/101
+function ghostWorldBoundaryCollision()
+	-- middle number between ceiling, ghost's y and floor (minus the ghost's srite height )
+	GHOST.y = mid(WORLD.ceiling, GHOST.y, WORLD.floor - (GHOST.size - 1))
+end
+
+function ghostWallCollision()
+	local ghostHitbox = ghostCalculateHitBox()
+	if ghostHitbox.x < WALL_ABOVE.x + WALL_ABOVE.w
+			and ghostHitbox.x + ghostHitbox.w > WALL_ABOVE.x
+			and ghostHitbox.y < WALL_ABOVE.y + WALL_ABOVE.h
+			and ghostHitbox.y + ghostHitbox.h > WALL_ABOVE.y then
+		return true
+	else
+		return false
 	end
 end
 
-if ghost.y <= 4 then
-	ghost.y = 4
+function ghostCalculateHitBox()
+	local hitbox = { x = GHOST.x, y = GHOST.y, w = GHOST.size, h = GHOST.size }
+	return hitbox
+end
+
+function ghostFalling()
+	GHOST.y = GHOST.y - (GHOST.verticalSpeed * DELTATIME)
+	GHOST.verticalSpeed = GHOST.verticalSpeed + (-100 * DELTATIME)
 end
 
 function ghostJump()
 	if btnp(5) then
-		ghost.verticalSpeed = ghost.jumpSpeed
-	end
-end
-
-function ghostCalculateCollision()
-	-- Ghost touches the floor
-	if ghost.y >= 124 then
-		-- print("game over", 64, 64, COLORS.RED)
+		GHOST.verticalSpeed = GHOST.jumpSpeed
 	end
 end
 
@@ -73,18 +90,29 @@ function ghostCalculateAnimation()
 	local timeBetweenSprites = 0.3
 	if btnp(5) then
 		TIMER.ghostAnimationSpriteTime = 0.4
-		ghost.activeSpriteSheet = 2
+		GHOST.activeSpriteSheet = 2
 	end
 
 	if TIMER.ghostAnimationSpriteTime == 0 then
-		ghost.activeSpriteSheet = 0
+		GHOST.activeSpriteSheet = 0
 	end
-	ghost.currentSprite = flr(((time() / timeBetweenSprites) % 2) + ghost.activeSpriteSheet)
+	GHOST.currentSprite = flr(((time() / timeBetweenSprites) % 2) + GHOST.activeSpriteSheet)
+end
+
+---- WALL CALCULATIONS -----------------------
+function moveWall()
+	local wallSpeed = 0.4
+	WALL_ABOVE.x -= wallSpeed
 end
 
 ---- DRAWING -----------------------
 function ghostDraw()
-	spr(ghost.currentSprite, ghost.x - (ghost.size / 2), ghost.y - (ghost.size / 2))
+	spr(GHOST.currentSprite, GHOST.x, GHOST.y)
+	pset(GHOST.x, GHOST.y, COLORS.NEONGREEN)
+end
+
+function wallDraw()
+	rectfill(WALL_ABOVE.x, WALL_ABOVE.y, WALL_ABOVE.x + WALL_ABOVE.w, WALL_ABOVE.y + WALL_ABOVE.h, COLORS.DARKGREEN)
 end
 
 -- GAME START -----------------------
@@ -101,17 +129,14 @@ function _update60()
 	calculateDeltaTime()
 	ghostCalculateBehavior()
 	ghostCalculateAnimation()
+	moveWall()
 end
 
 function _draw()
-	cls(COLORS.DARKBLUE)
-	-- spr(4, 80, 30, 4, 14)/
-	-- spr(6, 60, 10, 4, 14)
-
-	ghostCalculateCollision()
+	-- cls(COLORS.DARKBLUE)
 	ghostDraw()
-	PRINT.inCenter("game over", 64, COLORS.RED)
-	pset(64, 70, COLORS.NEONGREEN)
+	wallDraw()
+	-- rect(GHOST.x - 4, GHOST.y - 4, GHOST.x + 3, GHOST.y + 3, COLORS.RED) -- ghost hitbox
 end
 
 --
