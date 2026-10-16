@@ -148,7 +148,7 @@ function _draw()
 	ghostDraw()
 	wallDraw()
 	if GAME_FREEZE then
-		PRINT.inCenter("game over", 63, COLORS.RED)
+		PRINT.inCenter("game over from mac", 63, COLORS.RED)
 	end
 	-- rect(GHOST.x - 4, GHOST.y - 4, GHOST.x + 3, GHOST.y + 3, COLORS.RED) -- ghost hitbox
 end
