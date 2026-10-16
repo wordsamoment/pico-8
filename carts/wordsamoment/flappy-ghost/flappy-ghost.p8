@@ -17,6 +17,8 @@ DELTATIME = nil
 TIMER = setmetatable({}, { __index = function() return 0 end })
 -- Clever countdown timer helper - https://lynn.github.io/blog/pico-timers/
 
+GAME_FREEZE = false
+
 WORLD = { ceiling = 0, floor = 127 }
 GHOST = { x = 64, y = 50, size = 8, currentSprite = 0, lastJumpTime = 0, verticalSpeed = 0, jumpSpeed = 40, activeSpriteSheet = 0 }
 WALL_ABOVE = { x = 100, y = 0, w = 5, h = 40 }
@@ -43,7 +45,6 @@ function ghostCalculateBehavior()
 	ghostJump()
 	ghostFalling()
 	ghostWorldBoundaryCollision()
-	ghostWallCollision()
 end
 
 -- Not needed for x axis in flappy-ghost
@@ -58,15 +59,22 @@ function ghostWorldBoundaryCollision()
 	GHOST.y = mid(WORLD.ceiling, GHOST.y, WORLD.floor - (GHOST.size - 1))
 end
 
-function ghostWallCollision()
+function ghostIsWallColliding(wall)
 	local ghostHitbox = ghostCalculateHitBox()
-	if ghostHitbox.x < WALL_ABOVE.x + WALL_ABOVE.w
-			and ghostHitbox.x + ghostHitbox.w > WALL_ABOVE.x
-			and ghostHitbox.y < WALL_ABOVE.y + WALL_ABOVE.h
-			and ghostHitbox.y + ghostHitbox.h > WALL_ABOVE.y then
+	if ghostHitbox.x < wall.x + wall.w
+			and ghostHitbox.x + ghostHitbox.w > wall.x
+			and ghostHitbox.y < wall.y + wall.h
+			and ghostHitbox.y + ghostHitbox.h > wall.y then
 		return true
 	else
 		return false
+	end
+end
+
+function gameOver()
+	local ghostWallColliding = ghostIsWallColliding(WALL_ABOVE)
+	if ghostWallColliding then
+		GAME_FREEZE = true
 	end
 end
 
@@ -125,17 +133,23 @@ function _init()
 end
 
 function _update60()
-	calculateTimers()
-	calculateDeltaTime()
-	ghostCalculateBehavior()
-	ghostCalculateAnimation()
-	moveWall()
+	if not GAME_FREEZE then
+		calculateTimers()
+		calculateDeltaTime()
+		ghostCalculateBehavior()
+		ghostCalculateAnimation()
+		moveWall()
+		gameOver()
+	end
 end
 
 function _draw()
-	-- cls(COLORS.DARKBLUE)
+	cls(COLORS.DARKBLUE)
 	ghostDraw()
 	wallDraw()
+	if GAME_FREEZE then
+		PRINT.inCenter("game over", 63, COLORS.RED)
+	end
 	-- rect(GHOST.x - 4, GHOST.y - 4, GHOST.x + 3, GHOST.y + 3, COLORS.RED) -- ghost hitbox
 end
 
