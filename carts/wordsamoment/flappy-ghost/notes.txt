@@ -1,3 +1,19 @@
+optimization notes for next time
+
+simplify wall creation
+ - x is the same
+ - width is the same
+Summary Checklist to Fix Stuttering:
+
+    Eliminate table creation ({}) inside _update60() (this is almost certainly what's causing your hitching).
+
+    Clean up the PRINT.inCenter function so it doesn't crash on game over.
+
+    Cache your delta time/timers rather than running lookup functions repeatedly.
+
+Fixing the table allocations alone should instantly smooth out that 60fps pacing!
+--------------
+
 The deltatime is the time since your last frame. It is used to keep things constant, even if your framerate isn't.
 
 Maybe you remember some older games. If you play them now, some of them can not handle the possible higher framerates of modern gpus. This causes the game to "run to fast", like you can move faster or something like this.

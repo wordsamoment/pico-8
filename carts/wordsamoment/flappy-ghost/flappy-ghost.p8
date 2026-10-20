@@ -16,11 +16,10 @@ COLORS = { BLACK = 0, DARKBLUE = 1, MAGENTA = 2, DARKGREEN = 3, BROWN = 4, DARKG
 DELTATIME = nil -- global delta time
 TIMER = setmetatable({}, { __index = function() return 0 end }) -- Clever countdown timer helper - https://lynn.github.io/blog/pico-timers/
 
-GAME_OVER = false
+GAME = { speed = 1.5, wallGap = 40, maxWalls = 2, over = false }
 WORLD = { ceiling = 0, floor = 127 }
-GHOST = { x = 64, y = 50, size = 8, currentSprite = 0, lastJumpTime = 0, verticalSpeed = 0, jumpSpeed = 80, activeSpriteSheet = 0 }
-WALL_ABOVE = { x = 100, y = WORLD.ceiling, w = 5, h = 52 }
-WALL_BOTTOM = { x = 100, y = WORLD.floor - 52, w = 5, h = 52 }
+GHOST = { x = 64, y = 50, size = 8, currentSprite = 0, lastJumpTime = 0, verticalSpeed = 0, jumpSpeed = GAME.speed * 70, activeSpriteSheet = 0 }
+WALLS = {} -- go to createWall()
 
 -- FUNCTIONS -----------------------
 ---- SETUP CALCULATIONS -----------------------
@@ -58,25 +57,33 @@ end
 
 function ghostIsWallColliding(wall)
 	local ghostHitbox = ghostCalculateHitBox()
-	if ghostHitbox.x < wall.x + wall.w
-			and ghostHitbox.x + ghostHitbox.w > wall.x
-			and ghostHitbox.y < wall.y + wall.h
-			and ghostHitbox.y + ghostHitbox.h > wall.y then
+	if ghostHitbox.x < wall.top_wall.x + wall.top_wall.width
+			and ghostHitbox.x + ghostHitbox.w > wall.top_wall.x
+			and ghostHitbox.y < wall.top_wall.y + wall.top_wall.height
+			and ghostHitbox.y + ghostHitbox.h > wall.top_wall.y then
+		return true
+	elseif ghostHitbox.x < wall.bottom_wall.x + wall.bottom_wall.width
+			and ghostHitbox.x + ghostHitbox.w > wall.bottom_wall.x
+			and ghostHitbox.y < wall.bottom_wall.y + wall.bottom_wall.height
+			and ghostHitbox.y + ghostHitbox.h > wall.bottom_wall.y then
 		return true
 	else
 		return false
 	end
 end
 
-function ghostIsColliding()
-end
+function isGameOver()
+	local ghostCollidedWithWall = false
 
-function gameOver()
-	if ghostIsWallColliding(WALL_ABOVE)
-			or ghostIsWallColliding(WALL_BOTTOM)
-			or ghostIsTouchingFloor() then
+	for wall in all(WALLS) do
+		ghostCollidedWithWall = ghostIsWallColliding(wall)
+	end
+
+	if ghostCollidedWithWall or ghostIsTouchingFloor() then
 		GHOST.currentSprite = 4
-		GAME_OVER = true
+		return true
+	else
+		return false
 	end
 end
 
@@ -92,12 +99,13 @@ end
 
 function ghostFalling()
 	GHOST.y = GHOST.y - (GHOST.verticalSpeed * DELTATIME)
-	GHOST.verticalSpeed = GHOST.verticalSpeed + (-300 * DELTATIME)
+	GHOST.verticalSpeed = GHOST.verticalSpeed + ((-200 * GAME.speed) * DELTATIME)
 end
 
 function ghostJump()
 	if btnp(5) then
 		GHOST.verticalSpeed = GHOST.jumpSpeed
+		sfx(0)
 	end
 end
 
@@ -115,71 +123,84 @@ function ghostCalculateAnimation()
 end
 
 ---- WALL CALCULATIONS -----------------------
-
 function wallCalculateBehavior()
-	moveWall(WALL_ABOVE)
-	moveWall(WALL_BOTTOM)
-	respawnWall(WALL_ABOVE, "top")
-	respawnWall(WALL_BOTTOM, "bottom")
+	moveWall()
+	respawnWall()
 end
 
 function moveWall(wall)
-	local wallSpeed = 2
-	wall.x -= wallSpeed
-end
-
-function respawnWall(wall, type)
-	if wall.x + wall.w <= 0 then
-		wall.x = 128
-		if type == "top" then
-			wall.h = rnd(20) + 20
-		end
-		if type == "bottom" then
-			wall.y = WORLD.floor - (rnd(50) + 30)
-		end
+	for wall in all(WALLS) do
+		wall.top_wall.x -= GAME.speed
+		wall.bottom_wall.x -= GAME.speed
 	end
 end
 
--- WALL_ABOVE = { x = 100, y = WORLD.ceiling, w = 5, h = 40 }
--- WALL_BOTTOM = { x = 100, y = WORLD.floor - 40, w = 5, h = 40 }
+function respawnWall()
+	if WALLS[1].top_wall.x + WALLS[1].top_wall.width <= 0 then
+		del(WALLS, WALLS[1])
+		createWall()
+	end
+	if WALLS[1].top_wall.x + WALLS[1].top_wall.width <= 64 then
+		createWall()
+	end
+end
+
+function createWall()
+	if #WALLS < GAME.maxWalls then
+		local height = rnd(80) + 20
+		local wall = {
+			top_wall = { x = 128, y = WORLD.ceiling, width = 5, height = height },
+			bottom_wall = { x = 128, y = height + GAME.wallGap, width = 5, height = WORLD.floor }
+		}
+		add(WALLS, wall)
+	end
+end
 
 ---- DRAWING -----------------------
 function ghostDraw()
 	spr(GHOST.currentSprite, GHOST.x, GHOST.y)
 end
 
-function wallDraw(wall)
-	rectfill(wall.x, wall.y, wall.x + wall.w, wall.y + wall.h, COLORS.DARKGREEN)
+function wallDraw()
+	for wall in all(WALLS) do
+		rectfill(wall.top_wall.x, wall.top_wall.y, wall.top_wall.x + wall.top_wall.width, wall.top_wall.y + wall.top_wall.height, COLORS.DARKGREEN)
+		rectfill(wall.bottom_wall.x, wall.bottom_wall.y, wall.bottom_wall.x + wall.bottom_wall.width, wall.bottom_wall.y + wall.bottom_wall.height, COLORS.DARKGREEN)
+	end
 end
 
 function gameOverDraw()
-	if GAME_OVER then
-		PRINT.inCenter("game over from pc", 63, COLORS.RED)
+	if GAME.over then
+		PRINT.inCenter("game over", 63, COLORS.RED)
 	end
 end
 
 -- GAME START -----------------------
 function _init()
+	poke(0x5f5c, 255)
+	-- Make btnp not repeat
+	createWall()
 end
 
 function _update60()
-	gameOver()
-	if not GAME_OVER then
+	if not GAME.over then
 		calculateTimers()
 		calculateDeltaTime()
-		ghostCalculateBehavior()
-		ghostCalculateAnimation()
+		-- ghostCalculateBehavior()
+		-- ghostCalculateAnimation()
 		wallCalculateBehavior()
+		GAME.over = isGameOver()
 	end
 end
 
 function _draw()
 	cls(COLORS.DARKBLUE)
+
 	gameOverDraw()
-	ghostDraw()
-	wallDraw(WALL_ABOVE)
-	wallDraw(WALL_BOTTOM)
+	-- ghostDraw()
+	wallDraw()
 	-- ghostDrawHitBox()
+	-- print(stat(1))
+	-- print(stat(7) .. "fps")
 end
 
 --
@@ -194,3 +215,6 @@ __gfx__
 00066066000660660006666600066666000880880008808800000000000000000000000000000000000000000000000000000000000000000000000000000000
 00666660606666600066666060666660008888800088888000000000000000000000000000000000000000000000000000000000000000000000000000000000
 66660000066600006666000006660000888800008888000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+__sfx__
+0101000003520075200b5200f52012520165200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0002000022750207501f7501b75019750187501675014750117500f7500d7500b7500975008750067500375001750007502a75000000000000000000000000000000000000000000000000000000000000000000
