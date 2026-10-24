@@ -76,12 +76,14 @@ end
 function isGameOver()
 	for wall in all(WALLS) do
 		if ghostIsWallColliding(wall) then
+			sfx(1)
 			GHOST.current_sprite = 4
 			return true
 		end
 	end
 
 	if ghostIsTouchingFloor() then
+		sfx(1)
 		GHOST.current_sprite = 4
 		return true
 	end
@@ -99,6 +101,7 @@ function ghostFalling()
 end
 
 function ghostJump()
+	GHOST.jump_speed = GAME.speed * 90
 	if btnp(5) then
 		GHOST.vertical_speed = GHOST.jump_speed
 		sfx(0)
@@ -115,6 +118,7 @@ function ghostCalculateAnimation()
 
 	if TIMER.ghost_invisible_cooldown == 0 then
 		if btnp(4) then
+			sfx(2)
 			TIMER.ghost_invisible = 2
 			GHOST.invisible = true
 			TIMER.ghost_invisible_cooldown = 5
@@ -142,6 +146,7 @@ function ghostCalculateAnimation()
 	end
 
 	if TIMER.ghost_invisible == 0 then
+		sfx(-2)
 		GHOST.invisible = false
 	end
 
@@ -261,9 +266,9 @@ end
 -- GAME START -----------------------
 function _init()
 	-- SETUP
-	GAME = { speed = 1.5, wall_gap = 40, max_walls = 2, over = false }
+	GAME = { speed = 0.5, wall_gap = 40, max_walls = 2, over = false }
 	WORLD = { ceiling = 0, floor = 127 }
-	GHOST = { x = 64, y = 50, size = 8, current_sprite = 0, vertical_speed = 0, jump_speed = GAME.speed * 100, active_sprite_sheet = 0, jumping = false, invisible = false }
+	GHOST = { x = 64, y = 50, size = 8, current_sprite = 0, vertical_speed = 0, jump_speed = GAME.speed * 90, active_sprite_sheet = 0, jumping = false, invisible = false }
 	GHOST_PARTICLES = {}
 	WALLS = {}
 	poke(0x5f5c, 255)
@@ -282,6 +287,12 @@ function _update60()
 		ghostCalculateAnimation()
 		wallCalculateBehavior()
 		GAME.over = isGameOver()
+	end
+
+	if GAME.speed < 1.5 then
+		GAME.speed += 0.001
+	else
+		GAME.speed = 1.5
 	end
 end
 
@@ -363,5 +374,6 @@ __gfx__
 00000000066777777777776000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000066666666000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __sfx__
-0101000003520075200b5200f52012520165200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0002000022750207501f7501b75019750187501675014750117500f7500d7500b7500975008750067500375001750007502a75000000000000000000000000000000000000000000000000000000000000000000
+0001000003520075200b5200f52012520165200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+b802000022750207501f7501b75019750187501675014750117500f7500d7500b7500975008750067500375001750000000000000000000000000000000000000000000000000000000000000000000000000000
+c80200200075001750017500175001750017500275002750027500375004750057500575006750067500775007750087500875008750087500875007750077500675006750057500575004750037500275001750
