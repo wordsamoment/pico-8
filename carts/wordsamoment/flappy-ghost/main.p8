@@ -232,13 +232,13 @@ end
 
 function sceneDraw()
 	spr(64, 102, -6, 4, 4)
-	spr(48, 0 - 1, 80)
-	spr(49, 8 - 1, 80)
-	spr(48, 7 - 1, 73)
-	spr(34, 15 - 1, 73)
-	spr(18, 15 - 1, 65)
-	spr(48, 20, 71, 1, 1, true)
-	spr(48, 27, 78, 1, 1, true)
+	-- spr(48, 0 - 1, 80)
+	-- spr(49, 8 - 1, 80)
+	-- spr(48, 7 - 1, 73)
+	-- spr(34, 15 - 1, 73)
+	-- spr(18, 15 - 1, 65)
+	-- spr(48, 20, 71, 1, 1, true)
+	-- spr(48, 27, 78, 1, 1, true)
 
 	-- FLOOR
 	for tile = 0, 16, 1 do
@@ -266,7 +266,7 @@ end
 -- GAME START -----------------------
 function _init()
 	-- SETUP
-	GAME = { speed = 0.5, wall_gap = 40, max_walls = 2, over = false }
+	GAME = { speed = 1, wall_gap = 40, max_walls = 2, over = false }
 	WORLD = { ceiling = 0, floor = 127 }
 	GHOST = { x = 64, y = 50, size = 8, current_sprite = 0, vertical_speed = 0, jump_speed = GAME.speed * 90, active_sprite_sheet = 0, jumping = false, invisible = false }
 	GHOST_PARTICLES = {}
@@ -287,12 +287,6 @@ function _update60()
 		ghostCalculateAnimation()
 		wallCalculateBehavior()
 		GAME.over = isGameOver()
-	end
-
-	if GAME.speed < 1.5 then
-		GAME.speed += 0.001
-	else
-		GAME.speed = 1.5
 	end
 end
 
