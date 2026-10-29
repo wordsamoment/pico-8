@@ -2,3 +2,5 @@
 carts/demos/
 pico-8.code-workspace
 .DS_Store
+*.zip
+*.png
