@@ -1,6 +1,17 @@
 ---- INIT -----------------------
 function createGhost()
-	GHOST = { x = 64, y = 50, size = 8, vertical_speed = 0, jump_speed = GAME.speed * 90, current_sprite = 0, next_sprite_set_step = 2, sprite_choice = 0, jumping = false, invisible = false }
+	GHOST = {
+		x = 64,
+		y = 50,
+		size = 8,
+		vertical_speed = 0,
+		jump_speed = GAME.speed * 90,
+		current_sprite = 0,
+		next_sprite_set_step = 2,
+		sprite_choice = 0,
+		jumping = false,
+		invisible = false
+	}
 end
 
 ---- CALCULATIONS -----------------------
@@ -20,12 +31,12 @@ function ghostIsWallColliding(wall)
 		if GHOST.x < wall.x + wall.width
 				and GHOST.x + GHOST.size > wall.x
 				and GHOST.y < wall.top_part.y + wall.top_part.height
-				and GHOST.y + GHOST.size - 1 > wall.top_part.y then
+				and GHOST.y + GHOST.size > wall.top_part.y then
 			return true
 		elseif GHOST.x < wall.x + wall.width
 				and GHOST.x + GHOST.size > wall.x
 				and GHOST.y < wall.bottom_part.y + wall.bottom_part.height
-				and GHOST.y + GHOST.size - 1 > wall.bottom_part.y then
+				and GHOST.y + GHOST.size > wall.bottom_part.y then
 			return true
 		else
 			return false
@@ -126,5 +137,5 @@ function ghostDraw()
 end
 
 function ghostDrawHitBox()
-	rect(GHOST.x, GHOST.y, GHOST.x + GHOST.size, GHOST.y + (GHOST.size - 1))
+	rect(GHOST.x, GHOST.y, GHOST.x + GHOST.size, GHOST.y + GHOST.size, COLORS.neon_green)
 end
