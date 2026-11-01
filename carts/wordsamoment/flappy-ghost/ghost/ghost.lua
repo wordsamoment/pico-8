@@ -30,7 +30,7 @@ function ghostIsWallColliding(wall)
 	if not GHOST.invisible then
 		if GHOST.x < wall.x + wall.width
 				and GHOST.x + GHOST.size > wall.x
-				and GHOST.y < wall.top_part.y + wall.top_part.height
+				and GHOST.y < wall.top_part.y + wall.top_part.height - 1
 				and GHOST.y + GHOST.size > wall.top_part.y then
 			return true
 		elseif GHOST.x < wall.x + wall.width
