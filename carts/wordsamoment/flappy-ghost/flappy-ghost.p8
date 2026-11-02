@@ -76,13 +76,13 @@ function _init()
 	poke(0x5f5c, 255)
 	-- Make btnp not repeat
 	createWall()
-	TIMER.ghost_particle_spawn_time = 0.75
 end
 
 function _update60()
 	if not GAME.over then
 		calculateDeltaTime()
 		calculateTimers()
+		updateEnvironment()
 		spawnGhostParticles()
 		moveGhostParticles()
 		ghostCalculateBehavior()
@@ -95,7 +95,7 @@ end
 
 function _draw()
 	cls(COLORS.black)
-	sceneDraw()
+	drawMainScene()
 	wallDraw()
 	ghostDraw()
 	drawScore()

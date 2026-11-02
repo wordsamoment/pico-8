@@ -1,4 +1,6 @@
 ---- GHOST PARTICLE CALCULATIONS -----------------------
+TIMER.ghost_particle_spawn_time = 0.75
+
 function spawnGhostParticles()
 	if TIMER.ghost_particle_spawn_time == 0 then
 		add(GHOST_PARTICLES, { x = GHOST.x + 1 - rnd(2), y = GHOST.y + 6 + rnd(2), speed = 0.1, life = 40 })
