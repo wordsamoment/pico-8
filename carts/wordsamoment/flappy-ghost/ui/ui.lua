@@ -1,3 +1,5 @@
+MENU = { options = {} }
+
 function drawScore()
 	PRINT:score(SCORE.count, 10, COLORS.neon_green)
 end
