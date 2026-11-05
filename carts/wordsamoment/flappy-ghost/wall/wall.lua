@@ -50,8 +50,8 @@ function wallDraw()
 			spr(17, flr(wall.x + 0.5), brick)
 		end
 		-- Debug wall draw
-		-- rectfill(flr(wall.x + 0.5), wall.top_part.y, flr(wall.x + 0.5) + wall.width, wall.top_part.y + wall.top_part.height, COLORS.dark_green)
-		-- rectfill(flr(wall.x + 0.5), wall.bottom_part.y, flr(wall.x + 0.5) + wall.width, wall.bottom_part.y + wall.bottom_part.height, COLORS.dark_green)
+		-- rectfill(flr(wall.x + 0.5), wall.top_part.y, flr(wall.x + 0.5) + wall.width, wall.top_part.y + wall.top_part.height, COLORS.green)
+		-- rectfill(flr(wall.x + 0.5), wall.bottom_part.y, flr(wall.x + 0.5) + wall.width, wall.bottom_part.y + wall.bottom_part.height, COLORS.green)
 	end
 	palt(0, true)
 end

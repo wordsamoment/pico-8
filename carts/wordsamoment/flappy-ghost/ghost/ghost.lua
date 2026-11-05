@@ -137,5 +137,5 @@ function ghostDraw()
 end
 
 function ghostDrawHitBox()
-	rect(GHOST.x, GHOST.y, GHOST.x + GHOST.size, GHOST.y + GHOST.size, COLORS.neon_green)
+	rect(GHOST.x, GHOST.y, GHOST.x + GHOST.size, GHOST.y + GHOST.size, COLORS.green)
 end
