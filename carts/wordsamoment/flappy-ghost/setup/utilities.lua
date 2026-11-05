@@ -1,13 +1,13 @@
 ---- GLOBAL VARIABLES -----------------------
 
 -- ORIGINAL PALLETE
--- COLORS = { black = 0, dark_blue = 1, magenta = 2, dark_green = 3, brown = 4, dark_grey = 5, grey = 6, white = 7, red = 8, orange = 9, yellow = 10, neon_green = 11, light_blue = 12, lavender = 13, pink = 14, peach = 15 }
+-- COLORS = { black = 0, dark_blue = 1, dark_puple = 2, dark_green = 3, brown = 4, dark_grey = 5, grey = 6, white = 7, red = 8, orange = 9, yellow = 10, green = 11, blue = 12, indigo = 13, pink = 14, peach = 15 }
 
 -- CUSTOM PALLETE
 -- https://nerdyteachers.com/PICO-8/Palette/?c=WzAsMjcsMiwzLDIxLDUsNiw3LDE4LDI5LDE5LDExLDE2LDI2LDE0LDE3XQ==
 poke(0x5f2e, 1)
 pal({ [0] = 0, -5, 2, 3, -11, 5, 6, 7, -14, -3, -13, 11, -16, -6, 14, -15 }, 1)
-COLORS = { black = 0, grass_green = 1, magenta = 2, dark_green = 3, mud_brown = 4, dirt_brown = 5, grey = 6, white = 7, dark_magenta = 8, plum = 9, petrol = 10, neon_green = 11, dark_brown = 12, lime = 13, pink = 14, dark_blue = 15 }
+COLORS = { black = 0, jade = 1, dark_purple = 2, dark_green = 3, eggplant = 4, dirt_brown = 5, grey = 6, white = 7, plum = 8, mauve = 9, forest = 10, green = 11, onyx = 12, lime = 13, pink = 14, midnight = 15 }
 
 DELTATIME = nil -- global delta time
 TIMER = setmetatable({}, { __index = function() return 0 end }) -- Clever countdown timer helper - https://lynn.github.io/blog/pico-timers/
@@ -46,7 +46,7 @@ PRINT = {
 	end,
 
 	log = function(self, text)
-		print(text, COLORS.neon_green)
+		print(text, COLORS.green)
 		-- one normal letter = 4 px len
 	end
 }

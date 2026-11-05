@@ -21,3 +21,44 @@ COLORS
 ----------
 Can type 32 characters in a row.
 Can type 20 or 21 lines before scrolling.
+
+
+
+
+ 	#000000 	black
+01 	#1D2B53 	dark blue
+02 	#7E2553 	dark purple / magenta
+03 	#008751 	dark green
+04 	#AB5236 	brown
+05 	#5F574F 	dark gray / grey=gray
+06 	#C2C3C7 	light gray
+07 	#FFF1E8 	white
+08 	#FF004D 	red
+09 	#FFA300 	orange
+10 	#FFEC27 	yellow
+11 	#00E756 	green / neon_green
+12 	#29ADFF 	blue / light_blue 
+13 	#83769C 	indigo / lavender
+14 	#FF77A8 	pink
+15 	#FFCCAA 	peach
+* official names in manual
+
+Hidden Palette
+
+Number 	Hex color 	Name *
+128 / -16 	#291814 	onyx
+129 / -15 	#111D35 	midnight
+130 / -14 	#422136 	plum / dark_magenta
+131 / -13 	#125359 	forest / petrol
+132 / -12 	#742F29 	chocolate
+133 / -11 	#49333B 	eggplant / mud_brown
+134 / -10 	#A28879 	beige
+135 / -9 	#F3EF7D 	lemon
+136 / -8 	#BE1250 	burgundy
+137 / -7 	#FF6C24 	pumpkin
+138 / -6 	#A8E72E 	lime
+139 / -5 	#00B543 	jade / grass green
+140 / -4 	#065AB5 	royal
+141 / -3 	#754665 	mauve
+142 / -2 	#FF6E59 	coral
+143 / -1 	#FF9D81 	salmon

@@ -61,18 +61,18 @@ function drawMoon()
 	end
 
 	fillp(0x95a6)
-	circfill(MOON.outer_shadow.center_x, MOON.outer_shadow.center_y, MOON.outer_shadow.radius, COLORS.dark_blue)
+	circfill(MOON.outer_shadow.center_x, MOON.outer_shadow.center_y, MOON.outer_shadow.radius, COLORS.midnight)
 	fillp(0xa5a5)
 	circ(MOON.inner_shadow.center_x, MOON.inner_shadow.center_y, MOON.inner_shadow.radius, COLORS.black)
 	-- change moon color on level difficutly
-	-- circfill(117, 10, MOON.shadow_radius - 1, COLORS.dark_blue)
+	-- circfill(117, 10, MOON.shadow_radius - 1, COLORS.midnight)
 	fillp()
 	-- reset
 
 	-- Moon Sprite
 	spr(64, 102, -6, 4, 4)
 	pset(MOON.crater.x, MOON.crater.y, MOON.crater.color)
-	-- rect(109, 1, 126, 21, COLORS.neon_green)
+	-- rect(109, 1, 126, 21, COLORS.green)
 end
 
 function drawMainScene()

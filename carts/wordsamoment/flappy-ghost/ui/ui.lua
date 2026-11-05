@@ -1,7 +1,7 @@
 MENU = { options = {} }
 
 function drawScore()
-	PRINT:score(SCORE.count, 10, COLORS.neon_green)
+	PRINT:score(SCORE.count, 10, COLORS.green)
 end
 
 local skill_icon_y_offset = 0
