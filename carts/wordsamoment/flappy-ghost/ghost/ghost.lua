@@ -1,21 +1,4 @@
----- INIT -----------------------
-function createGhost()
-	GHOST = {
-		x = 64,
-		y = 50,
-		size = 8,
-		vertical_speed = 0,
-		jump_speed = GAME.speed * 90,
-		current_sprite = 0,
-		next_sprite_set_step = 2,
-		sprite_choice = 0,
-		jumping = false,
-		invisible = false
-	}
-end
-
 ---- CALCULATIONS -----------------------
-
 -- https://nerdyteachers.com/PICO-8/Collision/101
 function ghostWorldBoundaryCollision()
 	-- middle number between ceiling, ghost's y and floor (minus the ghost's srite height )
@@ -63,25 +46,6 @@ function ghostJump()
 	end
 end
 
-function ghostInvisibleSkill()
-	if TIMER.ghost_invisible_cooldown == 0 then
-		if btnp(4) then
-			sfx(2)
-			TIMER.ghost_invisible = 2
-			GHOST.invisible = true
-			TIMER.ghost_invisible_cooldown = 5
-		end
-	end
-end
-
-function ghostCalculateBehavior()
-	ghostJump()
-	ghostInvisibleSkill()
-	ghostFalling()
-	ghostWorldBoundaryCollision()
-end
-
----- DRAWING -----------------------
 -- Doesn't draw, calculates sprite to be drawn by ghostDraw()
 function ghostCalculateAnimation()
 	-- Ghost Spritesheet reference:
@@ -122,17 +86,24 @@ function ghostCalculateAnimation()
 	-- Summing sprite_choice (0 or 1) and sprite_offset(2,4,6)
 	-- The duration of each sprite before flipping is "TIMER.time_between_sprites" long
 	GHOST.current_sprite = GHOST.sprite_choice + sprite_offset
+	-- COnsider using sset for the eyes, not multiple sprites.
 end
 
+function ghostCalculateBehavior()
+	ghostJump()
+	ghostInvisibleSkillUpdate()
+	ghostFalling()
+	ghostWorldBoundaryCollision()
+end
+
+---- DRAWING -----------------------
 function ghostDeath()
 	sfx(1)
 	GHOST.current_sprite = 8
 end
 
 function ghostDraw()
-	-- if not GAME.over then
-	drawGhostParticles()
-	-- end
+	ghostParticlesDraw()
 	spr(GHOST.current_sprite, flr(GHOST.x + 0.5), flr(GHOST.y + 0.5))
 end
 

@@ -1,14 +1,13 @@
 ---- GHOST PARTICLE CALCULATIONS -----------------------
-TIMER.ghost_particle_spawn_time = 0.75
 
-function spawnGhostParticles()
+function ghostParticlesSpawn()
 	if TIMER.ghost_particle_spawn_time == 0 then
 		add(GHOST_PARTICLES, { x = GHOST.x + 1 - rnd(2), y = GHOST.y + 6 + rnd(2), speed = 0.1, life = 40 })
 		TIMER.ghost_particle_spawn_time = 1
 	end
 end
 
-function moveGhostParticles()
+function ghostParticlesMove()
 	for particle in all(GHOST_PARTICLES) do
 		particle.x -= particle.speed
 		particle.y = GHOST.y + 6 + flr(((time() / 0.5) % 2))
@@ -22,7 +21,8 @@ function moveGhostParticles()
 	end
 end
 
-function drawGhostParticles()
+---- DRAWING -----------------------
+function ghostParticlesDraw()
 	for particle in all(GHOST_PARTICLES) do
 		pset(particle.x, particle.y, COLORS.grey)
 	end

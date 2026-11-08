@@ -1,22 +1,11 @@
-function createWorld()
-	WORLD = {
-		edge_left = 0,
-		edge_right = 127,
-		ceiling = 0,
-		floor = 127
-	}
-
-	MOON = {
-		outer_shadow = { center_x = 117, center_y = 10, radius = 16, start_radius = 16, end_radius = 22, duration = 8, elapsed_time = 0 },
-		inner_shadow = { center_x = 117, center_y = 10, radius = 15, start_radius = 18, end_radius = 20, duration = 9, elapsed_time = 0 },
-		crater = { duration = 2 }
-	}
+---- CALCULATIONS -----------------------
+function moonCreate()
 	TIMER.moon_inner_shadow = MOON.inner_shadow.duration
 	TIMER.moon_outer_shadow = MOON.outer_shadow.duration
 	TIMER.moon_crater = MOON.crater.duration
 end
 
-function updateShadowMoon()
+function shadowMoonUpdate()
 	-- Outer shadow
 	MOON.outer_shadow.elapsed_time = TIMER.moon_outer_shadow / (MOON.outer_shadow.duration / 3) % 3
 	if flr(MOON.outer_shadow.elapsed_time) < 1 then
@@ -36,22 +25,23 @@ function updateShadowMoon()
 	end
 end
 
-function updateCraterMoon()
+function craterMoonUpdate()
 	if TIMER.moon_crater == 0 then
 		local craterX = flr(rnd(18) + 6)
 		local craterY = flr(rnd(20) + 39)
 		-- f(x) = 13 - x // f(7) = 13 - 7 = 6 (Grey) //  f(6) = 13 - 6 = 7 (White) in current color selection. (utilities.lua COLORS)
 		sset(craterX, craterY, 13 - sget(craterX, craterY))
+
 		TIMER.moon_crater = MOON.crater.duration
 	end
 end
 
-function updateEnvironment()
-	updateShadowMoon()
-	updateCraterMoon()
+function environmentUpdate()
+	shadowMoonUpdate()
+	craterMoonUpdate()
 end
-
-function drawMoon()
+---- DRAWING -----------------------
+function moonDraw()
 	if TIMER.moon_inner_shadow == 0 then
 		TIMER.moon_inner_shadow = MOON.inner_shadow.duration
 	end
@@ -75,6 +65,6 @@ function drawMoon()
 	-- rect(109, 1, 126, 21, COLORS.green)
 end
 
-function drawMainScene()
-	drawMoon()
+function mainSceneDraw()
+	moonDraw()
 end

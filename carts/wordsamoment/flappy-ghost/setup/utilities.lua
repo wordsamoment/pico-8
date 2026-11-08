@@ -10,6 +10,7 @@ pal({ [0] = 0, -5, 2, 3, -11, 5, 6, 7, -14, -3, -13, 11, -16, -6, 14, -15 }, 1)
 COLORS = { black = 0, jade = 1, dark_purple = 2, dark_green = 3, eggplant = 4, dirt_brown = 5, grey = 6, white = 7, plum = 8, mauve = 9, forest = 10, green = 11, onyx = 12, lime = 13, pink = 14, midnight = 15 }
 
 DELTATIME = nil -- global delta time
+-- maybe have dedicated TIMER tables later.
 TIMER = setmetatable({}, { __index = function() return 0 end }) -- Clever countdown timer helper - https://lynn.github.io/blog/pico-timers/
 
 ---- SETUP CALCULATIONS -----------------------
@@ -30,12 +31,20 @@ end
 
 -- UTILITIES -----------------------
 PRINT = {
-	inCenter = function(self, text, height)
-		local text_style = "\f0\^w\^t\^x5\^obff"
-		local glyph_width = 8
-		local glyph_height = 12
-		print(text_style .. text, 64 - ((#text * glyph_width) / 2), height - (glyph_height / 2), color)
-		-- one normal letter = 4 px len
+	inCenter = function(self, text, y, style)
+		local styles = {
+			normal = { code = "\fb", h = 5 },
+			big = { code = "\f0\^w\^t\^x5\^obff", h = 10 }
+		}
+
+		local s = styles[style] or styles.normal
+		local str = s.code .. text
+
+		-- measure off-screen; print returns the x after the last glyph
+		local w = print(str, 0, -500) - 1
+		-- -1 drops the trailing gap
+
+		print(str, 64 - w / 2, y - s.h / 2)
 	end,
 
 	score = function(self, text, height)

@@ -1,6 +1,6 @@
 ---- INIT -----------------------
 
-function createWall()
+function generateWall()
 	if #WALLS < GAME.max_walls then
 		local gap_position = (flr(rnd(11)) * 8) + 8
 		local bricks = { 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128 }
@@ -30,10 +30,10 @@ end
 function respawnWall()
 	if WALLS[1].x + WALLS[1].width <= 0 then
 		del(WALLS, WALLS[1])
-		createWall()
+		generateWall()
 	end
 	if WALLS[1].x + WALLS[1].width <= 64 then
-		createWall()
+		generateWall()
 	end
 end
 
