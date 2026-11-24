@@ -1,11 +1,28 @@
 function globalVariablesCreate()
 	MODE = {
 		main_menu = false,
+		main_menu_to_gameplay = false,
 		gameplay = false,
 		game_over = false
 	}
 
-	MAIN_MENU = { options = {} }
+	DURATION = {
+		main_menu_transition = 2,
+		ghost_invisible = 3,
+		ghost_invisible_cooldown = 6
+	}
+
+	MAIN_MENU = {
+		name_position = { x = 10, y = 30, x_end = -60 },
+		current_option = 1,
+		options = {
+			{ label = "nEW GAME", select_arrow_y = 48 },
+			{ label = "hIGH SCORES", select_arrow_y = 60 },
+			{ label = "qUIT", select_arrow_y = 72 }
+		},
+		transition = 1
+	}
+
 	GAME = {
 		speed = 1,
 		wall_gap = 32,
@@ -32,6 +49,7 @@ function globalVariablesCreate()
 	GHOST = {
 		x = 64,
 		y = 50,
+		x_main_menu = 90,
 		size = 8,
 		vertical_speed = 0,
 		jump_speed = GAME.speed * 90,
@@ -55,6 +73,27 @@ end
 
 function gameInit()
 	globalVariablesCreate()
-	setActiveMode("gameplay")
+	setActiveMode("main_menu")
 	generateWall()
+end
+
+function isGameOver()
+	-- Ghost touched the floor
+	if ghostIsTouchingFloor() then
+		ghostDeath()
+		sfx(-2)
+		return true
+	end
+
+	-- Ghost hit a wall
+	for wall in all(WALLS) do
+		if ghostIsWallColliding(wall) then
+			ghostDeath()
+			sfx(-2)
+			return true
+		end
+	end
+
+	-- Ghost still alive
+	return false
 end
