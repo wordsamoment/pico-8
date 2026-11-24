@@ -38,7 +38,7 @@ end
 
 function ghostJump()
 	GHOST.jump_speed = GAME.speed * 90
-	if btnp(5) then
+	if btnp(❎) then
 		GHOST.vertical_speed = GHOST.jump_speed
 		GHOST.jumping = true
 		TIMER.ghost_jumping = 0.2
@@ -46,15 +46,7 @@ function ghostJump()
 	end
 end
 
--- Doesn't draw, calculates sprite to be drawn by ghostDraw()
-function ghostCalculateAnimation()
-	-- Ghost Spritesheet reference:
-	-- 0 1 = Base sprites
-	-- 2 3 = Jumping sprites
-	-- 4 5 = Invisible sprites
-	-- 6 7 = Jumping + Invisible sprites
-	-- 8 9 = Death sprites
-
+function ghostUpdateSprite()
 	local sprite_offset = 0
 
 	if TIMER.time_between_sprites == 0 then
@@ -82,11 +74,8 @@ function ghostCalculateAnimation()
 		sprite_offset += GHOST.next_sprite_set_step * 2
 	end
 
-	-- Set the appropriate current ghost sprite.
-	-- Summing sprite_choice (0 or 1) and sprite_offset(2,4,6)
-	-- The duration of each sprite before flipping is "TIMER.time_between_sprites" long
 	GHOST.current_sprite = GHOST.sprite_choice + sprite_offset
-	-- COnsider using sset for the eyes, not multiple sprites.
+	-- Rewrite with sset, no multiple sprites of the ghost.
 end
 
 function ghostCalculateBehavior()
@@ -100,11 +89,13 @@ end
 function ghostDeath()
 	sfx(1)
 	GHOST.current_sprite = 8
+	-- see what to do if sset is used in the end for sprite
 end
 
-function ghostDraw()
+function ghostDraw(x, y)
 	ghostParticlesDraw()
-	spr(GHOST.current_sprite, flr(GHOST.x + 0.5), flr(GHOST.y + 0.5))
+	spr(GHOST.current_sprite, flr(x + 0.5), flr(y + 0.5))
+	-- probably always sprite 0 with sset.
 end
 
 function ghostDrawHitBox()

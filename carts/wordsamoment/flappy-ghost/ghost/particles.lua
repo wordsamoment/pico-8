@@ -1,8 +1,8 @@
 ---- GHOST PARTICLE CALCULATIONS -----------------------
 
-function ghostParticlesSpawn()
+function ghostParticlesSpawn(ghost_x)
 	if TIMER.ghost_particle_spawn_time == 0 then
-		add(GHOST_PARTICLES, { x = GHOST.x + 1 - rnd(2), y = GHOST.y + 6 + rnd(2), speed = 0.1, life = 40 })
+		add(GHOST_PARTICLES, { x = ghost_x + 1 - rnd(2), y = GHOST.y + 6 + rnd(2), speed = 0.1, life = 40 })
 		TIMER.ghost_particle_spawn_time = 1
 	end
 end
@@ -11,9 +11,10 @@ function ghostParticlesMove()
 	for particle in all(GHOST_PARTICLES) do
 		particle.x -= particle.speed
 		particle.y = GHOST.y + 6 + flr(((time() / 0.5) % 2))
+		-- Change to DURATION instead of time()
 		-- this needs a line equation where ghost is 0,0
 		-- f(x) = ax+b
-		-- f(Ghost.x) = Ghost.y
+		-- f(ghost_x) = Ghost.y
 		particle.life -= 1
 		if particle.life < 0 then
 			del(GHOST_PARTICLES, particle)
