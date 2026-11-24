@@ -31,6 +31,21 @@ end
 
 -- UTILITIES -----------------------
 PRINT = {
+	-- redo this by hand.
+	-- first make it separate for normal and big
+	-- then maybe combine
+	-- https://pico-8.fandom.com/wiki/Centering_Text
+	-- 		textlabel="this is some cool text!!!"
+
+	-- function hcenter(s)
+	--   -- screen center minus the
+	--   -- string length times the
+	--   -- pixels in a char's width,
+	--   -- cut in half
+	--   return 64-#s*2
+	-- return 61 for y
+	-- end
+
 	inCenter = function(self, text, y, style)
 		local styles = {
 			normal = { code = "\fb", h = 5 },
