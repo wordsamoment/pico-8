@@ -7,20 +7,42 @@ end
 
 -- Main Menu mode
 function mainMenuModeUpd()
+	mainMenuExecuteSelectedOption()
+	ghostUpdateSprite()
+	ghostParticlesSpawn(GHOST.x_main_menu)
+	ghostParticlesMove()
 end
 
 function mainMenuModeDrw()
+	mainSceneDraw()
+	environmentUpdate()
 	mainMenuDraw()
+	mainMenuNavigateOptions()
+	ghostDraw(GHOST.x_main_menu, GHOST.y)
+end
+
+-- Main Menu transition to Gameplay mode
+function mainMenuTransitionToGameplayModeUpd()
+	transitionMainMenuToGameplayUpd()
+	ghostUpdateSprite()
+	ghostParticlesMove()
+end
+
+function mainMenuTransitionToGameplayModeDrw()
+	mainSceneDraw()
+	environmentUpdate()
+	ghostDraw(GHOST.x, GHOST.y)
+	transitionMainMenuToGameplayDrw()
 end
 
 -- Gameplay mode
 function gameplayModeUpd()
 	calculateTimers()
 	environmentUpdate()
-	ghostParticlesSpawn()
+	ghostParticlesSpawn(GHOST.x)
 	ghostParticlesMove()
 	ghostCalculateBehavior()
-	ghostCalculateAnimation()
+	ghostUpdateSprite()
 	wallCalculateBehavior()
 	scoreIncrease()
 	if isGameOver() then setActiveMode("game_over") end
@@ -29,7 +51,7 @@ end
 function gameplayModeDrw()
 	mainSceneDraw()
 	wallDraw()
-	ghostDraw()
+	ghostDraw(GHOST.x, GHOST.y)
 	scoreDraw()
 	ghostInvisibleSkillIconDraw()
 	-- print(MODE.gameplay, 0, 50, COLORS.green)
@@ -37,15 +59,16 @@ end
 
 -- Gameover mode
 function gameOverModeUpd()
-	if btnp(4) then
+	if btnp(🅾️) then
 		gameInit()
+		setActiveMode("gameplay") -- kinda mid cause gameInit sets it to main menu?
 	end
 end
 
 function gameOverModeDrw()
 	mainSceneDraw()
 	wallDraw()
-	ghostDraw()
+	ghostDraw(GHOST.x, GHOST.y)
 	scoreDraw()
 	ghostInvisibleSkillIconDraw()
 	PRINT:inCenter("game over", 60, "big")
