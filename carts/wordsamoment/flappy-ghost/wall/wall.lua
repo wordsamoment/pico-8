@@ -1,5 +1,4 @@
 ---- INIT -----------------------
-
 function generateWall()
 	if #WALLS < GAME.max_walls then
 		local gap_position = (flr(rnd(11)) * 8) + 8

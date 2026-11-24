@@ -3,64 +3,18 @@ version 43
 __lua__
 --flappy ghost
 --by wordsamoment
-#include setup/game.lua
-#include setup/mode.lua
-#include setup/utilities.lua
-#include ui/main_menu.lua
-#include score/score.lua
 #include environment/world.lua
 #include ghost/ghost.lua
 #include ghost/particles.lua
 #include ghost/skill.lua
+#include score/score.lua
+#include setup/game.lua
+#include setup/mode.lua
+#include setup/utilities.lua
+#include transition/transition.lua
+#include ui/main_menu.lua
+#include ui/window_frame.lua
 #include wall/wall.lua
-
-function isGameOver()
-	-- Ghost touched the floor
-	if ghostIsTouchingFloor() then
-		ghostDeath()
-		sfx(-2)
-		return true
-	end
-
-	-- Ghost hit a wall
-	for wall in all(WALLS) do
-		if ghostIsWallColliding(wall) then
-			ghostDeath()
-			sfx(-2)
-			return true
-		end
-	end
-
-	-- Ghost still alive
-	return false
-end
-
-function sceneDraw()
-	spr(64, 102, -6, 4, 4)
-	-- spr(48, 0 - 1, 80)
-	-- spr(49, 8 - 1, 80)
-	-- spr(48, 7 - 1, 73)
-	-- spr(34, 15 - 1, 73)
-	-- spr(18, 15 - 1, 65)
-	-- spr(48, 20, 71, 1, 1, true)
-	-- spr(48, 27, 78, 1, 1, true)
-
-	-- FLOOR
-	for tile = 0, 16, 1 do
-		if tile % 2 == 1 then
-			spr(68, tile * 8, 112, 1, 1)
-			spr(84, tile * 8, 120, 1, 1)
-		else
-			spr(69, tile * 8, 112, 1, 1)
-			spr(85, tile * 8, 120, 1, 1)
-		end
-	end
-end
-function windowFrameDraw()
-	fillp(0x8124)
-	rect(0, 0, 127, 127, COLORS.grey)
-	fillp()
-end
 
 -- GAME START -----------------------
 function _init()
@@ -72,20 +26,24 @@ end
 
 function _update60()
 	calculateDeltaTime()
+	calculateTimers()
+	if MODE.main_menu then mainMenuModeUpd() end
+	if MODE.main_menu_to_gameplay then mainMenuTransitionToGameplayModeUpd() end
 	if MODE.gameplay then gameplayModeUpd() end
 	if MODE.game_over then gameOverModeUpd() end
 end
 
 function _draw()
 	cls(COLORS.black)
-	-- if MODE.main_menu then mainMenuModeDrw() end
+	if MODE.main_menu then mainMenuModeDrw() end
+	if MODE.main_menu_to_gameplay then mainMenuTransitionToGameplayModeDrw() end
 	if MODE.gameplay then gameplayModeDrw() end
 	if MODE.game_over then gameOverModeDrw() end
 
 	-- PRINT:log(MODE.main_menu)
 	-- PRINT:log(MODE.gameplay)
 	-- PRINT:log(MODE.game_over)
-	-- windowFrameDraw()
+	windowFrameDraw()
 	-- ghostDrawHitBox()
 end
 
