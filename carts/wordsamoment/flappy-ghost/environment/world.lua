@@ -1,10 +1,4 @@
 ---- CALCULATIONS -----------------------
-function moonCreate()
-	TIMER.moon_inner_shadow = MOON.inner_shadow.duration
-	TIMER.moon_outer_shadow = MOON.outer_shadow.duration
-	TIMER.moon_crater = MOON.crater.duration
-end
-
 function shadowMoonUpdate()
 	-- Outer shadow
 	MOON.outer_shadow.elapsed_time = TIMER.moon_outer_shadow / (MOON.outer_shadow.duration / 3) % 3
